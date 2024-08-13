@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tic_tac_toe/models/game.dart';
 import 'package:tic_tac_toe/providers/game_provider.dart';
 import 'package:tic_tac_toe/screens/game_create_screen.dart';
-import 'package:tic_tac_toe/screens/game_screen.dart';
 
 class GameListScreen extends StatefulWidget {
   const GameListScreen({super.key});
@@ -15,7 +15,6 @@ class _GameListScreenState extends State<GameListScreen> {
   @override
   void initState() {
     super.initState();
-    // GameProvider'dan oyunları çekmek
     context.read<GameProvider>().fetchGames();
   }
 
@@ -38,6 +37,10 @@ class _GameListScreenState extends State<GameListScreen> {
               return ListTile(
                 title: Text(game.gameName ?? 'Unnamed Game'),
                 subtitle: Text(game.status ?? 'Status not available'),
+                trailing: IconButton(
+                  icon: const Icon(Icons.delete, color: Colors.red),
+                  onPressed: () => _confirmDelete(context, game, gameProvider),
+                ),
                 onTap: () {
                   gameProvider.setCurrentGame(game);
                   Navigator.pushNamedAndRemoveUntil(
@@ -63,6 +66,38 @@ class _GameListScreenState extends State<GameListScreen> {
         tooltip: 'Create Game',
         child: const Icon(Icons.add),
       ),
+    );
+  }
+
+  void _confirmDelete(
+    BuildContext context,
+    Game game,
+    GameProvider gameProvider,
+  ) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Delete Game'),
+          content: const Text('Are you sure you want to delete this game?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              child: const Text('Delete', style: TextStyle(color: Colors.red)),
+              onPressed: () async {
+                Navigator.of(context).pop();
+
+                await gameProvider.deleteGame(game.id!);
+
+                if (!mounted) return;
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 }

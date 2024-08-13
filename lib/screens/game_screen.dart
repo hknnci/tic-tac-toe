@@ -26,6 +26,10 @@ class GameScreen extends StatelessWidget {
               return const Center(child: Text('No game selected.'));
             }
 
+            final backgroundColor = game.boardColor!.isNotEmpty
+                ? Color(int.parse(game.boardColor!.replaceFirst('ff', '0xff')))
+                : Colors.white;
+
             return Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -47,7 +51,7 @@ class GameScreen extends StatelessWidget {
                       child: Container(
                         decoration: BoxDecoration(
                           border: Border.all(color: Colors.black),
-                          color: Colors.white,
+                          color: backgroundColor,
                         ),
                         child: Center(
                           child: Text(

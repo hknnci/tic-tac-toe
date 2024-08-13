@@ -32,7 +32,7 @@ class GameProvider with ChangeNotifier {
       if (response.isNotEmpty) {
         final createdGame = Game.fromJson(response);
         _games.add(createdGame);
-        _currentGame = createdGame; // Set the current game here
+        _currentGame = createdGame;
         notifyListeners();
       } else {
         log('Failed to create game.');
@@ -100,6 +100,16 @@ class GameProvider with ChangeNotifier {
       }
     } catch (error) {
       log('Error updating board: $error');
+    }
+  }
+
+  Future<void> deleteGame(String gameId) async {
+    try {
+      await _client.from('games').delete().eq('id', gameId);
+      _games.removeWhere((game) => game.id == gameId);
+      notifyListeners();
+    } catch (error) {
+      log('Error deleting game: $error');
     }
   }
 

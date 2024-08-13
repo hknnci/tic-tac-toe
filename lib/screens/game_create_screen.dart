@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:provider/provider.dart';
 import 'package:tic_tac_toe/models/game.dart';
 import 'package:tic_tac_toe/providers/game_provider.dart';
@@ -76,11 +77,35 @@ class _GameCreateScreenState extends State<GameCreateScreen> {
   }
 
   void _pickColor() async {
-    // Implement a color picker or selection logic here
-    // For simplicity, we'll use a fixed color
-    setState(() {
-      _backgroundColor = Colors.blue; // Example fixed color
-    });
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Pick a color'),
+        content: SingleChildScrollView(
+          child: ColorPicker(
+            onColorChanged: (Color color) {
+              setState(() {
+                _backgroundColor = color;
+              });
+            },
+            pickerColor: _backgroundColor,
+            colorPickerWidth: 300,
+            pickerAreaHeightPercent: 0.7,
+            enableAlpha: true,
+            displayThumbColor: true,
+            paletteType: PaletteType.hsvWithHue,
+          ),
+        ),
+        actions: <Widget>[
+          TextButton(
+            child: const Text('Done'),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
+      ),
+    );
   }
 
   void _createGame() async {
