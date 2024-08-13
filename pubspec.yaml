@@ -9,6 +9,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+    
+  another_flushbar: ^1.12.30  
   flutter_colorpicker: ^1.1.0  
   provider: ^6.1.2  
   shared_preferences: ^2.3.1

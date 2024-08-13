@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:tic_tac_toe/models/game.dart';
 import 'dart:developer';
+import 'package:tic_tac_toe/widgets/generic_widgets.dart';
 
 class GameProvider with ChangeNotifier {
   final SupabaseClient _client = Supabase.instance.client;
@@ -103,18 +104,24 @@ class GameProvider with ChangeNotifier {
     }
   }
 
-  Future<void> deleteGame(String gameId) async {
+  Future<void> deleteGame(
+    String gameId,
+    VoidCallback onSuccess,
+    void Function(String message) onError,
+  ) async {
     try {
       await _client.from('games').delete().eq('id', gameId);
       _games.removeWhere((game) => game.id == gameId);
       notifyListeners();
+      onSuccess();
     } catch (error) {
       log('Error deleting game: $error');
+      onError('Error deleting game: $error');
     }
   }
 
-  Future<void> makeMove(int index) async {
-    if (_currentGame == null) return;
+  Future<void> makeMove(BuildContext context, index) async {
+    if (_currentGame == null || _currentGame!.status == 'Completed') return;
 
     // Prevent move if the cell is already taken
     if (_currentGame!.boardState![index] != 0) return;
@@ -125,8 +132,29 @@ class GameProvider with ChangeNotifier {
     // Check for win or draw
     final result = _checkGameResult(_currentGame!.boardState!);
     if (result != null) {
-      // Handle game over
-      _currentGame!.status = result == 'Draw' ? 'Draw' : '$result Wins';
+      if (result == 'Draw') {
+        // Board resetting after draw
+        GenericFlushbar.showInfoFlushbar(
+          context,
+          'It\'s a Draw! The game has been restarted.',
+        );
+        _currentGame!.boardState = List.filled(9, 0);
+        _currentGame!.currentTurn = 'X';
+      } else {
+        GenericFlushbar.showSuccessFlushbar(
+          context,
+          'Player $result wins! You may back to game list screen after review your marvelous win!',
+        );
+        _currentGame!.status = 'Completed';
+        _currentGame!.currentTurn = ''; // No turn after the game ends
+      }
+
+      await updateBoard(
+        _currentGame!,
+        _currentGame!.boardState!,
+        _currentGame!.currentTurn!,
+      );
+
       notifyListeners();
       return;
     }

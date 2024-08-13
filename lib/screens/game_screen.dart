@@ -46,7 +46,7 @@ class GameScreen extends StatelessWidget {
                   itemBuilder: (context, index) {
                     return GestureDetector(
                       onTap: () {
-                        context.read<GameProvider>().makeMove(index);
+                        context.read<GameProvider>().makeMove(context, index);
                       },
                       child: Container(
                         decoration: BoxDecoration(

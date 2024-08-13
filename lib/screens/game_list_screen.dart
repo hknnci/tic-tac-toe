@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:tic_tac_toe/models/game.dart';
 import 'package:tic_tac_toe/providers/game_provider.dart';
 import 'package:tic_tac_toe/screens/game_create_screen.dart';
+import 'package:tic_tac_toe/widgets/generic_widgets.dart';
 
 class GameListScreen extends StatefulWidget {
   const GameListScreen({super.key});
@@ -36,19 +37,17 @@ class _GameListScreenState extends State<GameListScreen> {
               final game = gameProvider.games[index];
               return ListTile(
                 title: Text(game.gameName ?? 'Unnamed Game'),
-                subtitle: Text(game.status ?? 'Status not available'),
+                subtitle: Text(game.status ?? 'Game Continues'),
                 trailing: IconButton(
                   icon: const Icon(Icons.delete, color: Colors.red),
                   onPressed: () => _confirmDelete(context, game, gameProvider),
                 ),
-                onTap: () {
-                  gameProvider.setCurrentGame(game);
-                  Navigator.pushNamedAndRemoveUntil(
-                    context,
-                    '/gameScreen',
-                    (Route<dynamic> route) => false,
-                  );
-                },
+                onTap: game.status == 'Completed'
+                    ? null
+                    : () {
+                        context.read<GameProvider>().setCurrentGame(game);
+                        Navigator.of(context).pushNamed('/gameScreen');
+                      },
               );
             },
           );
@@ -90,9 +89,17 @@ class _GameListScreenState extends State<GameListScreen> {
               onPressed: () async {
                 Navigator.of(context).pop();
 
-                await gameProvider.deleteGame(game.id!);
-
-                if (!mounted) return;
+                await gameProvider.deleteGame(
+                  game.id!,
+                  () => GenericFlushbar.showSuccessFlushbar(
+                    context,
+                    'Game deleted successfully!',
+                  ),
+                  (message) => GenericFlushbar.showErrorFlushbar(
+                    context,
+                    message,
+                  ),
+                );
               },
             ),
           ],
