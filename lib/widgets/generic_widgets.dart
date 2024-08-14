@@ -41,3 +41,25 @@ class GenericFlushbar {
     ).show(context);
   }
 }
+
+class GenericText extends StatelessWidget {
+  final String text;
+  final double fontSize;
+  final TextAlign textAlign;
+
+  const GenericText({
+    super.key,
+    required this.text,
+    this.fontSize = 18,
+    this.textAlign = TextAlign.center,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      text,
+      style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold),
+      textAlign: textAlign,
+    );
+  }
+}

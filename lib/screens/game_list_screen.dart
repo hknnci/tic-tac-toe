@@ -27,8 +27,14 @@ class _GameListScreenState extends State<GameListScreen> {
       ),
       body: Consumer<GameProvider>(
         builder: (context, gameProvider, child) {
+          if (gameProvider.isLoading) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
           if (gameProvider.games.isEmpty) {
-            return const Center(child: Text('No games available.'));
+            return const Center(
+              child: GenericText(text: 'No games available'),
+            );
           }
 
           return ListView.builder(
@@ -36,8 +42,14 @@ class _GameListScreenState extends State<GameListScreen> {
             itemBuilder: (context, index) {
               final game = gameProvider.games[index];
               return ListTile(
-                title: Text(game.gameName ?? 'Unnamed Game'),
-                subtitle: Text(game.status ?? 'Game Continues'),
+                title: GenericText(
+                  text: game.gameName ?? 'Unnamed Game',
+                  textAlign: TextAlign.left,
+                ),
+                subtitle: GenericText(
+                  text: game.status ?? 'Game Continues',
+                  textAlign: TextAlign.left,
+                ),
                 trailing: IconButton(
                   icon: const Icon(Icons.delete, color: Colors.red),
                   onPressed: () => _confirmDelete(context, game, gameProvider),

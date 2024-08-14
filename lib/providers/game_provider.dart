@@ -8,11 +8,17 @@ class GameProvider with ChangeNotifier {
   final SupabaseClient _client = Supabase.instance.client;
   List<Game> _games = [];
   Game? _currentGame;
+  bool _isLoading = false;
 
   List<Game> get games => _games;
   Game? get currentGame => _currentGame;
+  bool get isLoading => _isLoading;
 
   Future<void> fetchGames() async {
+    _isLoading = true;
+    // Used Future.microtask to notify listeners after the current build phase
+    Future.microtask(() => notifyListeners());
+
     try {
       final response = await _client.from('games').select();
       if (response.isNotEmpty) {
@@ -20,9 +26,13 @@ class GameProvider with ChangeNotifier {
         notifyListeners();
       } else {
         log('No games found.');
+        _games = [];
       }
     } catch (error) {
       log('Error fetching games: $error');
+    } finally {
+      _isLoading = false;
+      Future.microtask(() => notifyListeners());
     }
   }
 

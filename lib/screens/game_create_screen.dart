@@ -128,10 +128,6 @@ class _GameCreateScreenState extends State<GameCreateScreen> {
     // checking if the widget is still mounted before navigating
     if (!mounted || gameProvider.currentGame == null) return;
 
-    Navigator.pushNamedAndRemoveUntil(
-      context,
-      '/gameScreen',
-      (Route<dynamic> route) => false, // clearing all previous routes
-    );
+    Navigator.of(context).pushNamed('/gameScreen');
   }
 }
