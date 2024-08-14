@@ -130,31 +130,34 @@ class _GameListScreenState extends State<GameListScreen> {
     Game game,
     GameProvider gameProvider,
   ) {
+    // This is for fixing context issue
+    final rootContext = Navigator.of(context, rootNavigator: true).context;
+
     showDialog(
       context: context,
-      builder: (context) {
+      builder: (dialogContext) {
         return AlertDialog(
           title: const Text('Delete Game'),
           content: const Text('Are you sure you want to delete this game?'),
           actions: [
             TextButton(
-              onPressed: () => Navigator.of(context).pop(),
+              onPressed: () => Navigator.of(dialogContext).pop(),
               child: const Text('Cancel'),
             ),
             TextButton(
               child: const Text('Delete', style: TextStyle(color: Colors.red)),
               onPressed: () async {
-                Navigator.of(context).pop();
+                Navigator.of(dialogContext).pop();
 
                 await Future.microtask(() async {
                   await gameProvider.deleteGame(
                     game.id!,
                     () => GenericFlushbar.showSuccessFlushbar(
-                      context,
+                      rootContext,
                       'Game deleted successfully!',
                     ),
                     (message) => GenericFlushbar.showErrorFlushbar(
-                      context,
+                      rootContext,
                       message,
                     ),
                   );
