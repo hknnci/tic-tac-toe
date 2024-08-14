@@ -2,8 +2,8 @@ class Game {
   String? id;
   String? gameName;
   String? boardColor;
-  String? player1Id;
-  String? player2Id;
+  String? playerOne;
+  String? playerTwo;
   List<int>? boardState;
   String? currentTurn;
   String? status;
@@ -12,8 +12,8 @@ class Game {
     this.id,
     this.gameName,
     this.boardColor,
-    this.player1Id,
-    this.player2Id,
+    this.playerOne,
+    this.playerTwo,
     this.boardState,
     this.currentTurn,
     this.status,
@@ -24,8 +24,8 @@ class Game {
       id: json['id'],
       gameName: json['game_name'],
       boardColor: json['board_color'],
-      player1Id: json['player1_id'],
-      player2Id: json['player2_id'],
+      playerOne: json['player_one'],
+      playerTwo: json['player_two'],
       boardState: json["board_state"] == null
           ? []
           : List<int>.from(json["board_state"]!.map((x) => x)),
@@ -38,8 +38,8 @@ class Game {
     return {
       'game_name': gameName,
       'board_color': boardColor,
-      'player1_id': player1Id,
-      'player2_id': player2Id,
+      'player_one': playerOne,
+      'player_two': playerTwo,
       'status': status,
     };
   }

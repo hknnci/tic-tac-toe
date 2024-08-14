@@ -1,8 +1,10 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:provider/provider.dart';
 import 'package:tic_tac_toe/models/game.dart';
 import 'package:tic_tac_toe/providers/game_provider.dart';
+import 'package:tic_tac_toe/widgets/generic_widgets.dart';
 
 class GameCreateScreen extends StatefulWidget {
   const GameCreateScreen({super.key});
@@ -15,8 +17,20 @@ class _GameCreateScreenState extends State<GameCreateScreen> {
   final _gameNameController = TextEditingController();
   final _player1Controller = TextEditingController();
   final _player2Controller = TextEditingController();
-  Color _backgroundColor = Colors.white;
-  final _gameNameFocus = FocusNode();
+  Color _backgroundColor = const Color(0xFFf9faef);
+
+  @override
+  void initState() {
+    super.initState();
+    _player1Controller.text = _generateRandomPlayerName();
+    _player2Controller.text = _generateRandomPlayerName();
+  }
+
+  String _generateRandomPlayerName() {
+    final random = Random();
+    final randomNumber = random.nextInt(9000) + 1000;
+    return 'Player$randomNumber';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,54 +38,65 @@ class _GameCreateScreenState extends State<GameCreateScreen> {
       appBar: AppBar(
         title: const Text('Create Game'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            TextField(
-              controller: _gameNameController,
-              focusNode: _gameNameFocus,
-              decoration: const InputDecoration(
-                labelText: 'Game Name',
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              GenericTextFormField(
+                controller: _gameNameController,
+                hintText: 'Game Name',
               ),
-              autofocus: true,
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: _player1Controller,
-              decoration: const InputDecoration(
-                labelText: 'Player 1 Name',
+              const SizedBox(height: 16),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  _buildPlayerBox(_player1Controller, 'Player 1'),
+                  const SizedBox(width: 16),
+                  _buildPlayerBox(_player2Controller, 'Player 2'),
+                ],
               ),
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: _player2Controller,
-              decoration: const InputDecoration(
-                labelText: 'Player 2 Name',
-              ),
-            ),
-            const SizedBox(height: 16),
-            Row(
-              children: [
-                const Text('Background Color:'),
-                const SizedBox(width: 8),
-                GestureDetector(
-                  onTap: _pickColor,
-                  child: Container(
-                    width: 50,
-                    height: 50,
-                    color: _backgroundColor,
+              const SizedBox(height: 16),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text('Background Color:'),
+                  const SizedBox(width: 8),
+                  GestureDetector(
+                    onTap: _pickColor,
+                    child: Container(
+                      width: 50,
+                      height: 50,
+                      color: _backgroundColor,
+                    ),
                   ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: _createGame,
-              child: const Text('Create Game'),
-            ),
-          ],
+                ],
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: _createGame,
+                child: const Text('Create Game'),
+              ),
+            ],
+          ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildPlayerBox(TextEditingController controller, String label) {
+    return Expanded(
+      child: Column(
+        children: [
+          Icon(Icons.person, size: 50, color: Theme.of(context).primaryColor),
+          const SizedBox(height: 8),
+          GenericTextFormField(
+            controller: controller,
+            hintText: label,
+          ),
+        ],
       ),
     );
   }
@@ -118,14 +143,13 @@ class _GameCreateScreenState extends State<GameCreateScreen> {
     final game = Game(
       gameName: gameName,
       boardColor: _backgroundColor.value.toRadixString(16),
-      player1Id: player1Name,
-      player2Id: player2Name,
+      playerOne: player1Name,
+      playerTwo: player2Name,
     );
 
     final gameProvider = Provider.of<GameProvider>(context, listen: false);
     await gameProvider.createGame(game);
 
-    // checking if the widget is still mounted before navigating
     if (!mounted || gameProvider.currentGame == null) return;
 
     Navigator.of(context).pushNamed('/gameScreen');

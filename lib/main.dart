@@ -44,6 +44,10 @@ class MainApp extends StatelessWidget {
               }
 
               return MaterialApp(
+                theme: ThemeData(
+                  scaffoldBackgroundColor: const Color(0xFFDCE7C8),
+                  appBarTheme: const AppBarTheme(color: Color(0xFFf9faef)),
+                ),
                 home: userProvider.userName == null
                     ? NameEntryScreen()
                     : const GameListScreen(),

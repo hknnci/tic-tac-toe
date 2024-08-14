@@ -33,7 +33,11 @@ class _GameListScreenState extends State<GameListScreen> {
 
           if (gameProvider.games.isEmpty) {
             return const Center(
-              child: GenericText(text: 'No games available'),
+              child: GenericText(
+                text: 'No games available',
+                fontSize: 18,
+                textAlign: TextAlign.center,
+              ),
             );
           }
 
@@ -41,25 +45,35 @@ class _GameListScreenState extends State<GameListScreen> {
             itemCount: gameProvider.games.length,
             itemBuilder: (context, index) {
               final game = gameProvider.games[index];
-              return ListTile(
-                title: GenericText(
-                  text: game.gameName ?? 'Unnamed Game',
-                  textAlign: TextAlign.left,
+              return Card(
+                elevation: 4.0,
+                color: const Color(0xFFf9faef),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                  side: const BorderSide(
+                    color: Color(0xFFf9faef),
+                    width: 1.0,
+                  ),
                 ),
-                subtitle: GenericText(
-                  text: game.status ?? 'Game Continues',
-                  textAlign: TextAlign.left,
+                margin: const EdgeInsets.symmetric(
+                  vertical: 8.0,
+                  horizontal: 16.0,
                 ),
-                trailing: IconButton(
-                  icon: const Icon(Icons.delete, color: Colors.red),
-                  onPressed: () => _confirmDelete(context, game, gameProvider),
+                child: ListTile(
+                  title: GenericText(text: game.gameName ?? 'Unnamed Game'),
+                  subtitle: GenericText(text: game.status ?? 'Game Continues'),
+                  trailing: IconButton(
+                    icon: const Icon(Icons.delete, color: Colors.red),
+                    onPressed: () =>
+                        _confirmDelete(context, game, gameProvider),
+                  ),
+                  onTap: game.status == 'Completed'
+                      ? null
+                      : () {
+                          context.read<GameProvider>().setCurrentGame(game);
+                          Navigator.of(context).pushNamed('/gameScreen');
+                        },
                 ),
-                onTap: game.status == 'Completed'
-                    ? null
-                    : () {
-                        context.read<GameProvider>().setCurrentGame(game);
-                        Navigator.of(context).pushNamed('/gameScreen');
-                      },
               );
             },
           );
@@ -74,8 +88,9 @@ class _GameListScreenState extends State<GameListScreen> {
             ),
           );
         },
+        backgroundColor: const Color(0xFF4c662b),
         tooltip: 'Create Game',
-        child: const Icon(Icons.add),
+        child: const Icon(Icons.add, color: Colors.white),
       ),
     );
   }

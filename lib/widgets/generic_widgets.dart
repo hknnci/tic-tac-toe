@@ -50,8 +50,8 @@ class GenericText extends StatelessWidget {
   const GenericText({
     super.key,
     required this.text,
-    this.fontSize = 18,
-    this.textAlign = TextAlign.center,
+    this.fontSize = 16,
+    this.textAlign = TextAlign.left,
   });
 
   @override
@@ -60,6 +60,44 @@ class GenericText extends StatelessWidget {
       text,
       style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold),
       textAlign: textAlign,
+    );
+  }
+}
+
+class GenericTextFormField extends StatelessWidget {
+  final TextEditingController controller;
+  final String hintText;
+  final EdgeInsetsGeometry contentPadding;
+  final Color fillColor;
+  final BorderRadius borderRadius;
+  final VoidCallback? onTap;
+
+  const GenericTextFormField({
+    super.key,
+    required this.controller,
+    required this.hintText,
+    this.contentPadding =
+        const EdgeInsets.symmetric(vertical: 16.0, horizontal: 10.0),
+    this.fillColor = const Color(0xffeee2bc),
+    this.borderRadius = const BorderRadius.all(Radius.circular(12)),
+    this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return TextFormField(
+      controller: controller,
+      onTap: onTap,
+      decoration: InputDecoration(
+        hintText: hintText,
+        filled: true,
+        fillColor: const Color(0xFFf9faef),
+        border: OutlineInputBorder(
+          borderRadius: borderRadius,
+          borderSide: BorderSide.none,
+        ),
+        contentPadding: contentPadding,
+      ),
     );
   }
 }
