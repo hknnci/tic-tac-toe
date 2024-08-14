@@ -181,7 +181,13 @@ class _GameCreateScreenState extends State<GameCreateScreen> {
     final player1Name = _player1Controller.text;
     final player2Name = _player2Controller.text;
 
-    if (gameName.isEmpty || player1Name.isEmpty || player2Name.isEmpty) return;
+    if (gameName.isEmpty || player1Name.isEmpty || player2Name.isEmpty) {
+      GenericFlushbar.showErrorFlushbar(
+        context,
+        'Please fill in all fields.',
+      );
+      return;
+    }
 
     final game = Game(
       gameName: gameName,

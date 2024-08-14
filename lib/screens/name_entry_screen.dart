@@ -19,6 +19,8 @@ class NameEntryScreen extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
+              const GenericText(text: 'Welcome :)', fontSize: 24),
+              const SizedBox(height: 24),
               GenericTextFormField(
                 controller: _controller,
                 hintText: 'Name',
@@ -32,12 +34,18 @@ class NameEntryScreen extends StatelessWidget {
                         .setUserName(name)
                         .then((_) {
                       Navigator.pushReplacement(
+                        // ignore: use_build_context_synchronously
                         context,
                         MaterialPageRoute(
                           builder: (_) => const GameListScreen(),
                         ),
                       );
                     });
+                  } else {
+                    GenericFlushbar.showErrorFlushbar(
+                      context,
+                      'Please enter a username.',
+                    );
                   }
                 },
                 child: const Text('Submit'),

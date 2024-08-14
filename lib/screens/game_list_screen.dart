@@ -65,18 +65,28 @@ class _GameListScreenState extends State<GameListScreen> {
                 ),
                 child: ListTile(
                   title: GenericText(text: game.gameName ?? 'Unnamed Game'),
-                  subtitle: game.status == 'Completed'
-                      ? GenericText(
-                          text:
-                              '${game.status}: ${game.winnerSymbol} (${game.winnerName}) won!',
-                          fontSize: 16,
-                          textAlign: TextAlign.left,
-                        )
-                      : GenericText(
-                          text: game.status ?? 'Game Continues',
-                          fontSize: 16,
-                          textAlign: TextAlign.left,
-                        ),
+                  subtitle: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      GenericText(
+                        text: '${game.playerOne} vs ${game.playerTwo}',
+                        fontSize: 14,
+                      ),
+                      const SizedBox(height: 4),
+                      game.status == 'Completed'
+                          ? GenericText(
+                              text:
+                                  '${game.status}: ${game.winnerSymbol} (${game.winnerName}) won!',
+                              fontSize: 14,
+                              textAlign: TextAlign.left,
+                            )
+                          : GenericText(
+                              text: game.status ?? 'Game Continues',
+                              fontSize: 14,
+                              textAlign: TextAlign.left,
+                            ),
+                    ],
+                  ),
                   trailing: IconButton(
                     icon: const Icon(Icons.delete, color: Colors.red),
                     onPressed: () =>
