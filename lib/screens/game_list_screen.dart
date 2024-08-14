@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tic_tac_toe/models/game.dart';
 import 'package:tic_tac_toe/providers/game_provider.dart';
+import 'package:tic_tac_toe/providers/user_provider.dart';
 import 'package:tic_tac_toe/screens/game_create_screen.dart';
 import 'package:tic_tac_toe/widgets/generic_widgets.dart';
 
@@ -16,7 +17,10 @@ class _GameListScreenState extends State<GameListScreen> {
   @override
   void initState() {
     super.initState();
-    context.read<GameProvider>().fetchGames();
+
+    // Fetch the userId from UserProvider and pass it to fetchGames
+    final userId = context.read<UserProvider>().userId;
+    context.read<GameProvider>().fetchGames(userId!);
   }
 
   @override
@@ -61,18 +65,34 @@ class _GameListScreenState extends State<GameListScreen> {
                 ),
                 child: ListTile(
                   title: GenericText(text: game.gameName ?? 'Unnamed Game'),
-                  subtitle: GenericText(text: game.status ?? 'Game Continues'),
+                  subtitle: game.status == 'Completed'
+                      ? GenericText(
+                          text:
+                              '${game.status}: ${game.winnerSymbol} (${game.winnerName}) won!',
+                          fontSize: 16,
+                          textAlign: TextAlign.left,
+                        )
+                      : GenericText(
+                          text: game.status ?? 'Game Continues',
+                          fontSize: 16,
+                          textAlign: TextAlign.left,
+                        ),
                   trailing: IconButton(
                     icon: const Icon(Icons.delete, color: Colors.red),
                     onPressed: () =>
                         _confirmDelete(context, game, gameProvider),
                   ),
-                  onTap: game.status == 'Completed'
-                      ? null
-                      : () {
-                          context.read<GameProvider>().setCurrentGame(game);
-                          Navigator.of(context).pushNamed('/gameScreen');
-                        },
+                  onTap: () {
+                    if (game.status == 'Completed') {
+                      GenericFlushbar.showInfoFlushbar(
+                        context,
+                        'Game is completed!',
+                      );
+                    } else {
+                      context.read<GameProvider>().setCurrentGame(game);
+                      Navigator.of(context).pushNamed('/gameScreen');
+                    }
+                  },
                 ),
               );
             },

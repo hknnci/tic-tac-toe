@@ -46,19 +46,21 @@ class GenericText extends StatelessWidget {
   final String text;
   final double fontSize;
   final TextAlign textAlign;
+  final FontWeight fontWeight;
 
   const GenericText({
     super.key,
     required this.text,
     this.fontSize = 16,
     this.textAlign = TextAlign.left,
+    this.fontWeight = FontWeight.bold,
   });
 
   @override
   Widget build(BuildContext context) {
     return Text(
       text,
-      style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold),
+      style: TextStyle(fontSize: fontSize, fontWeight: fontWeight),
       textAlign: textAlign,
     );
   }

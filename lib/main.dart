@@ -45,8 +45,15 @@ class MainApp extends StatelessWidget {
 
               return MaterialApp(
                 theme: ThemeData(
+                  primaryColor: const Color(0xFF4c662b),
                   scaffoldBackgroundColor: const Color(0xFFDCE7C8),
                   appBarTheme: const AppBarTheme(color: Color(0xFFf9faef)),
+                  elevatedButtonTheme: ElevatedButtonThemeData(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF4c662b),
+                      foregroundColor: Colors.white,
+                    ),
+                  ),
                 ),
                 home: userProvider.userName == null
                     ? NameEntryScreen()

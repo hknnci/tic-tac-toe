@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tic_tac_toe/providers/game_provider.dart';
+import 'package:tic_tac_toe/widgets/generic_widgets.dart';
 
 class GameScreen extends StatelessWidget {
   const GameScreen({super.key});
@@ -30,46 +31,51 @@ class GameScreen extends StatelessWidget {
                 ? Color(int.parse(game.boardColor!.replaceFirst('ff', '0xff')))
                 : Colors.white;
 
-            // Determine the current player's name
             final currentPlayer =
                 game.currentTurn == 'X' ? game.playerOne : game.playerTwo;
 
             return Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(
-                  'Current Turn: ${game.currentTurn} (${currentPlayer ?? 'Not determined'})',
-                  style: const TextStyle(fontSize: 24),
+                GenericText(
+                  text: 'Game Name: ${game.gameName}',
+                  fontSize: 24,
                 ),
+                const SizedBox(height: 24),
+                GenericText(
+                  text:
+                      'Current Turn: ${game.currentTurn} (${currentPlayer ?? 'Not determined'})',
+                  fontSize: 24,
+                ),
+                const SizedBox(height: 24),
                 GridView.builder(
                   shrinkWrap: true,
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 3,
                   ),
+                  padding: const EdgeInsets.all(12),
                   itemCount: 9,
-                  itemBuilder: (context, index) {
-                    return GestureDetector(
-                      onTap: () {
-                        context.read<GameProvider>().makeMove(context, index);
-                      },
-                      child: Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.black),
-                          color: backgroundColor,
-                        ),
-                        child: Center(
-                          child: Text(
-                            game.boardState![index] == 0
-                                ? ''
-                                : game.boardState![index] == 1
-                                    ? 'X'
-                                    : 'O',
-                            style: const TextStyle(fontSize: 32),
-                          ),
+                  itemBuilder: (context, index) => GestureDetector(
+                    onTap: () {
+                      context.read<GameProvider>().makeMove(context, index);
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.black),
+                        color: backgroundColor,
+                      ),
+                      child: Center(
+                        child: Text(
+                          game.boardState![index] == 0
+                              ? ''
+                              : game.boardState![index] == 1
+                                  ? 'X'
+                                  : 'O',
+                          style: const TextStyle(fontSize: 32),
                         ),
                       ),
-                    );
-                  },
+                    ),
+                  ),
                 ),
               ],
             );

@@ -74,10 +74,16 @@ class _GameCreateScreenState extends State<GameCreateScreen> {
                   _buildPlayerBox(
                       _player1Controller, 'Player 1', _isPlayer1Disabled),
                   const SizedBox(width: 16),
-                  IconButton(
-                    icon: Icon(Icons.swap_horiz,
-                        color: Theme.of(context).primaryColor),
-                    onPressed: _swapPlayers,
+                  Padding(
+                    padding: const EdgeInsets.only(top: 54),
+                    child: IconButton(
+                      icon: Icon(
+                        Icons.swap_horiz,
+                        color: Theme.of(context).primaryColor,
+                        size: 30,
+                      ),
+                      onPressed: _swapPlayers,
+                    ),
                   ),
                   const SizedBox(width: 16),
                   _buildPlayerBox(
@@ -88,7 +94,10 @@ class _GameCreateScreenState extends State<GameCreateScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text('Background Color:'),
+                  const GenericText(
+                    text: 'Background Color:',
+                    fontWeight: FontWeight.normal,
+                  ),
                   const SizedBox(width: 8),
                   GestureDetector(
                     onTap: _pickColor,
@@ -120,7 +129,7 @@ class _GameCreateScreenState extends State<GameCreateScreen> {
     return Expanded(
       child: Column(
         children: [
-          Icon(Icons.person, size: 50, color: Theme.of(context).primaryColor),
+          const Icon(Icons.person, size: 50, color: Color(0xFF586249)),
           const SizedBox(height: 8),
           GenericTextFormField(
             controller: controller,
@@ -165,6 +174,9 @@ class _GameCreateScreenState extends State<GameCreateScreen> {
   }
 
   void _createGame() async {
+    final gameProvider = Provider.of<GameProvider>(context, listen: false);
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+
     final gameName = _gameNameController.text;
     final player1Name = _player1Controller.text;
     final player2Name = _player2Controller.text;
@@ -176,9 +188,9 @@ class _GameCreateScreenState extends State<GameCreateScreen> {
       boardColor: _backgroundColor.value.toRadixString(16),
       playerOne: player1Name,
       playerTwo: player2Name,
+      userId: userProvider.userId,
     );
 
-    final gameProvider = Provider.of<GameProvider>(context, listen: false);
     await gameProvider.createGame(game);
 
     if (!mounted || gameProvider.currentGame == null) return;

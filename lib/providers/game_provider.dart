@@ -14,13 +14,15 @@ class GameProvider with ChangeNotifier {
   Game? get currentGame => _currentGame;
   bool get isLoading => _isLoading;
 
-  Future<void> fetchGames() async {
+  Future<void> fetchGames(String userId) async {
     _isLoading = true;
     // Used Future.microtask to notify listeners after the current build phase
     Future.microtask(() => notifyListeners());
 
     try {
-      final response = await _client.from('games').select();
+      //it will list games by filtering with user_id
+      final response =
+          await _client.from('games').select().eq('user_id', userId);
       if (response.isNotEmpty) {
         _games = response.map((game) => Game.fromJson(game)).toList();
         notifyListeners();
@@ -50,34 +52,6 @@ class GameProvider with ChangeNotifier {
       }
     } catch (error) {
       log('Error creating game: $error');
-    }
-  }
-
-  Future<void> joinGame(Game game, String playerId) async {
-    // checking if game.id is null
-    if (game.id == null) {
-      log('Game ID is null. Cannot join the game.');
-      return;
-    }
-
-    final updatedGame = game.toJson();
-    updatedGame['player2_id'] = playerId;
-
-    try {
-      final response = await _client
-          .from('games')
-          .update(updatedGame)
-          .eq('id', game.id!)
-          .select()
-          .single();
-      if (response.isNotEmpty) {
-        _currentGame = Game.fromJson(response);
-        notifyListeners();
-      } else {
-        log('Failed to join game.');
-      }
-    } catch (error) {
-      log('Error joining game: $error');
     }
   }
 
@@ -114,22 +88,6 @@ class GameProvider with ChangeNotifier {
     }
   }
 
-  Future<void> deleteGame(
-    String gameId,
-    VoidCallback onSuccess,
-    void Function(String message) onError,
-  ) async {
-    try {
-      await _client.from('games').delete().eq('id', gameId);
-      _games.removeWhere((game) => game.id == gameId);
-      notifyListeners();
-      onSuccess();
-    } catch (error) {
-      log('Error deleting game: $error');
-      onError('Error deleting game: $error');
-    }
-  }
-
   Future<void> makeMove(BuildContext context, index) async {
     if (_currentGame == null || _currentGame!.status == 'Completed') return;
 
@@ -151,12 +109,15 @@ class GameProvider with ChangeNotifier {
         _currentGame!.boardState = List.filled(9, 0);
         _currentGame!.currentTurn = 'X';
       } else {
+        _currentGame!.status = 'Completed';
+        _currentGame!.winnerSymbol = result;
+        _currentGame!.winnerName =
+            result == 'X' ? _currentGame!.playerOne : currentGame!.playerTwo;
+
         GenericFlushbar.showSuccessFlushbar(
           context,
           'Player $result wins! You may back to game list screen after review your marvelous win!',
         );
-        _currentGame!.status = 'Completed';
-        _currentGame!.currentTurn = ''; // No turn after the game ends
       }
 
       await updateBoard(
@@ -208,6 +169,22 @@ class GameProvider with ChangeNotifier {
     }
 
     return null;
+  }
+
+  Future<void> deleteGame(
+    String gameId,
+    VoidCallback onSuccess,
+    void Function(String message) onError,
+  ) async {
+    try {
+      await _client.from('games').delete().eq('id', gameId);
+      _games.removeWhere((game) => game.id == gameId);
+      notifyListeners();
+      onSuccess();
+    } catch (error) {
+      log('Error deleting game: $error');
+      onError('Error deleting game: $error');
+    }
   }
 
   void setCurrentGame(Game game) {
