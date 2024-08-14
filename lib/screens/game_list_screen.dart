@@ -116,17 +116,19 @@ class _GameListScreenState extends State<GameListScreen> {
               onPressed: () async {
                 Navigator.of(context).pop();
 
-                await gameProvider.deleteGame(
-                  game.id!,
-                  () => GenericFlushbar.showSuccessFlushbar(
-                    context,
-                    'Game deleted successfully!',
-                  ),
-                  (message) => GenericFlushbar.showErrorFlushbar(
-                    context,
-                    message,
-                  ),
-                );
+                await Future.microtask(() async {
+                  await gameProvider.deleteGame(
+                    game.id!,
+                    () => GenericFlushbar.showSuccessFlushbar(
+                      context,
+                      'Game deleted successfully!',
+                    ),
+                    (message) => GenericFlushbar.showErrorFlushbar(
+                      context,
+                      message,
+                    ),
+                  );
+                });
               },
             ),
           ],

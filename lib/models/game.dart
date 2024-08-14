@@ -1,5 +1,6 @@
 class Game {
   String? id;
+  String? userId;
   String? gameName;
   String? boardColor;
   String? playerOne;
@@ -10,6 +11,7 @@ class Game {
 
   Game({
     this.id,
+    this.userId,
     this.gameName,
     this.boardColor,
     this.playerOne,
@@ -22,6 +24,7 @@ class Game {
   factory Game.fromJson(Map<String, dynamic> json) {
     return Game(
       id: json['id'],
+      userId: json['user_id'],
       gameName: json['game_name'],
       boardColor: json['board_color'],
       playerOne: json['player_one'],
