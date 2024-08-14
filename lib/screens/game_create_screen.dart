@@ -4,6 +4,7 @@ import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:provider/provider.dart';
 import 'package:tic_tac_toe/models/game.dart';
 import 'package:tic_tac_toe/providers/game_provider.dart';
+import 'package:tic_tac_toe/providers/user_provider.dart';
 import 'package:tic_tac_toe/widgets/generic_widgets.dart';
 
 class GameCreateScreen extends StatefulWidget {
@@ -18,18 +19,35 @@ class _GameCreateScreenState extends State<GameCreateScreen> {
   final _player1Controller = TextEditingController();
   final _player2Controller = TextEditingController();
   Color _backgroundColor = const Color(0xFFf9faef);
+  bool _isPlayer1Disabled = true; // Player 1 is disabled by default
 
   @override
   void initState() {
     super.initState();
-    _player1Controller.text = _generateRandomPlayerName();
+    final userName = Provider.of<UserProvider>(context, listen: false).userName;
     _player2Controller.text = _generateRandomPlayerName();
+    if (userName != null) {
+      _player1Controller.text = userName;
+    } else {
+      _player1Controller.text = _generateRandomPlayerName();
+    }
   }
 
   String _generateRandomPlayerName() {
     final random = Random();
     final randomNumber = random.nextInt(9000) + 1000;
     return 'Player$randomNumber';
+  }
+
+  void _swapPlayers() {
+    final temp = _player1Controller.text;
+    _player1Controller.text = _player2Controller.text;
+    _player2Controller.text = temp;
+
+    // Toggle the disabled state
+    setState(() {
+      _isPlayer1Disabled = !_isPlayer1Disabled;
+    });
   }
 
   @override
@@ -53,9 +71,17 @@ class _GameCreateScreenState extends State<GameCreateScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  _buildPlayerBox(_player1Controller, 'Player 1'),
+                  _buildPlayerBox(
+                      _player1Controller, 'Player 1', _isPlayer1Disabled),
                   const SizedBox(width: 16),
-                  _buildPlayerBox(_player2Controller, 'Player 2'),
+                  IconButton(
+                    icon: Icon(Icons.swap_horiz,
+                        color: Theme.of(context).primaryColor),
+                    onPressed: _swapPlayers,
+                  ),
+                  const SizedBox(width: 16),
+                  _buildPlayerBox(
+                      _player2Controller, 'Player 2', !_isPlayer1Disabled),
                 ],
               ),
               const SizedBox(height: 16),
@@ -86,7 +112,11 @@ class _GameCreateScreenState extends State<GameCreateScreen> {
     );
   }
 
-  Widget _buildPlayerBox(TextEditingController controller, String label) {
+  Widget _buildPlayerBox(
+    TextEditingController controller,
+    String label,
+    bool isDisabled,
+  ) {
     return Expanded(
       child: Column(
         children: [
@@ -95,6 +125,7 @@ class _GameCreateScreenState extends State<GameCreateScreen> {
           GenericTextFormField(
             controller: controller,
             hintText: label,
+            enabled: !isDisabled,
           ),
         ],
       ),

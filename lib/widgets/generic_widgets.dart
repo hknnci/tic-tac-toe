@@ -71,6 +71,7 @@ class GenericTextFormField extends StatelessWidget {
   final Color fillColor;
   final BorderRadius borderRadius;
   final VoidCallback? onTap;
+  final bool enabled;
 
   const GenericTextFormField({
     super.key,
@@ -81,6 +82,7 @@ class GenericTextFormField extends StatelessWidget {
     this.fillColor = const Color(0xffeee2bc),
     this.borderRadius = const BorderRadius.all(Radius.circular(12)),
     this.onTap,
+    this.enabled = true,
   });
 
   @override
@@ -88,6 +90,7 @@ class GenericTextFormField extends StatelessWidget {
     return TextFormField(
       controller: controller,
       onTap: onTap,
+      enabled: enabled,
       decoration: InputDecoration(
         hintText: hintText,
         filled: true,

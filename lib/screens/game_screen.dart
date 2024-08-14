@@ -30,11 +30,15 @@ class GameScreen extends StatelessWidget {
                 ? Color(int.parse(game.boardColor!.replaceFirst('ff', '0xff')))
                 : Colors.white;
 
+            // Determine the current player's name
+            final currentPlayer =
+                game.currentTurn == 'X' ? game.playerOne : game.playerTwo;
+
             return Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  'Current Turn: ${game.currentTurn ?? 'Not determined'}',
+                  'Current Turn: ${game.currentTurn} (${currentPlayer ?? 'Not determined'})',
                   style: const TextStyle(fontSize: 24),
                 ),
                 GridView.builder(

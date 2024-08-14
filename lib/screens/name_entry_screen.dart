@@ -26,11 +26,13 @@ class NameEntryScreen extends StatelessWidget {
                 final name = _controller.text.trim();
                 if (name.isNotEmpty) {
                   Provider.of<UserProvider>(context, listen: false)
-                      .setUserName(name);
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (_) => const GameListScreen()),
-                  );
+                      .setUserName(name)
+                      .then((_) {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (_) => const GameListScreen()),
+                    );
+                  });
                 }
               },
               child: const Text('Submit'),
