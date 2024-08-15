@@ -5,13 +5,13 @@ This is a turn-based Tic Tac Toe game developed using Flutter. The app uses Supa
 # Features
 
 **User Authentication**
-Users can enter their name, which will be associated with their gameplay. The name is stored locally using SharedPreferences and is also saved to Supabase for listing games with related user_id.
+- Users can enter their name, which will be associated with their gameplay. The name is stored locally using SharedPreferences and is also saved to Supabase for listing games with related user_id.
 
 **Game Creation**
-Users can create a new Tic Tac Toe game by specifying a game name, selecting a board background color, and inviting two participants.
+- Users can create a new Tic Tac Toe game by specifying a game name, selecting a board background color, and inviting two participants.
 
 **Real-Time Game Updates**
-The app uses Supabase for real-time updates, ensuring that all players see the current state of the game board as moves are made.
+- The app uses Supabase for real-time updates, ensuring that all players see the current state of the game board as moves are made.
 
 **Game List**
 - Users can view a list of available games. The list includes information about the participants and the current status of each game.
