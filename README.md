@@ -20,7 +20,7 @@ This is a turn-based Tic Tac Toe game developed using Flutter. The app uses Supa
 
 # Technologies Used
 
-- Flutter
+- Flutter (Channel beta, 3.23.0-0.1.pre)
 - Supabase
 - Provider
 - another_flushbar
